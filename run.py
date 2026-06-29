@@ -1,25 +1,22 @@
-from app.core.config import config
-from app.core.logger import logger
+"""
+OAMI Enterprise Startup
+"""
 
-from app.database.base import Base
-from app.database.session import engine
+import uvicorn
+
+from app.core.logger import logger
 
 
 def main():
 
-    Base.metadata.create_all(bind=engine)
+    logger.info("Starting OAMI Enterprise Server")
 
-    logger.info("Database Initialized")
-
-    logger.info("Starting OAMI Enterprise")
-
-    print("=" * 60)
-
-    print(config.settings.app.name)
-
-    print(config.settings.app.version)
-
-    print("=" * 60)
+    uvicorn.run(
+        "app.presentation.app:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=True,
+    )
 
 
 if __name__ == "__main__":
