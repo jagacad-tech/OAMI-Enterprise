@@ -1,0 +1,27 @@
+app:
+  name: OAMI Enterprise
+  version: 0.1.0 Alpha
+  debug: true
+  timezone: Asia/Kolkata
+
+server:
+  host: 0.0.0.0
+  port: 8000
+
+database:
+  url: sqlite:///database/oami.db
+
+trading:
+  mode: PAPER
+  capital: 1000000
+  risk_percent: 1.0
+  max_open_positions: 2
+
+scanner:
+  enabled: false
+  interval_ms: 1000
+  watchlist_file: watchlist.txt
+
+logging:
+  level: INFO
+  folder: logs

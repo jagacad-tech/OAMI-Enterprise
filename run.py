@@ -1,31 +1,31 @@
 """
-==========================================================
-OAMI Enterprise
-
-Version : 0.1.0 Alpha
-
-Author : OAMI Team
-
-==========================================================
+OAMI Enterprise Startup
 """
 
-from pathlib import Path
+from app.core.config import config
+from app.core.logger import logger
 
 
 def main():
 
+    logger.info("Starting OAMI Enterprise")
+
+    logger.info(
+        "Trading Mode : %s",
+        config.settings.trading.mode,
+    )
+
+    logger.info(
+        "Capital : %s",
+        config.settings.trading.capital,
+    )
+
+    logger.info("Scanner Enabled : %s",
+                config.settings.scanner.enabled)
+
     print("=" * 60)
-
-    print("OAMI Enterprise")
-
-    print("Version : 0.1.0 Alpha")
-
-    print("=" * 60)
-
-    print(f"Project Root : {Path.cwd()}")
-
-    print("Foundation Initialized Successfully")
-
+    print(config.settings.app.name)
+    print(config.settings.app.version)
     print("=" * 60)
 
 
