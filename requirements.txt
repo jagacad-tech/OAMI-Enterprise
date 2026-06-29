@@ -30,3 +30,7 @@ numpy
 pandas
 
 psutil
+
+sqlalchemy>=2.0
+
+alembic
