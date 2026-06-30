@@ -1,29 +1,44 @@
+# =====================================================
+# OAMI Enterprise - Git Ignore
+# =====================================================
+
+# Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
 
+# Virtual Environment
 .venv/
 venv/
+env/
 
+# Environment Variables
 .env
 
+# VS Code
 .vscode/
 
+# Logs
+logs/
 *.log
 
-logs/
+# Database
+database/*.db
 
-reports/
-
-*.db
-*.sqlite3
-
+# Python Cache
 .pytest_cache/
+.mypy_cache/
 
-.coverage
-
-dist/
-build/
-
-.idea/
-
+# OS Files
 .DS_Store
+Thumbs.db
+
+# Build
+build/
+dist/
+
+# Temporary Files
+*.tmp
+*.bak
