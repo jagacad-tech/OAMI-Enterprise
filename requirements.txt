@@ -34,3 +34,9 @@ psutil
 sqlalchemy>=2.0
 
 alembic
+
+httpx
+
+websockets
+
+pydantic

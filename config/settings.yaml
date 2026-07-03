@@ -1,27 +1,11 @@
-app:
-  name: OAMI Enterprise
-  version: 0.1.0 Alpha
-  debug: true
-  timezone: Asia/Kolkata
+openalgo:
 
-server:
-  host: 0.0.0.0
-  port: 8000
+  rest_url: https://ualgo.arvelstudios.com
 
-database:
-  url: sqlite:///database/oami.db
+  websocket_url: wss://ualgo.arvelstudios.com/ws
 
-trading:
-  mode: PAPER
-  capital: 1000000
-  risk_percent: 1.0
-  max_open_positions: 2
+  api_key: YOUR_OPENALGO_API_KEY
 
-scanner:
-  enabled: false
-  interval_ms: 1000
-  watchlist_file: watchlist.txt
+  timeout: 10
 
-logging:
-  level: INFO
-  folder: logs
+  reconnect: true
