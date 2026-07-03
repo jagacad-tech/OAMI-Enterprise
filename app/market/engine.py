@@ -5,17 +5,18 @@ Market Intelligence Engine
 
 from app.market.symbols import SymbolManager
 from app.market.scanner import Scanner
+from app.market.ranking import RankingEngine
 
 
 class MarketEngine:
-    """
-    Main controller for OAMI Market Intelligence.
-    """
 
     def __init__(self, watchlist="custom"):
 
         self.symbol_manager = SymbolManager(watchlist)
+
         self.scanner = Scanner()
+
+        self.ranking = RankingEngine()
 
     def start(self):
 
@@ -27,16 +28,28 @@ class MarketEngine:
 
         print(f"Loaded {len(symbols)} symbols\n")
 
-        results = []
+        snapshots = []
 
         for symbol in symbols:
 
-            result = self.scanner.scan(symbol)
+            snapshot = self.scanner.scan(symbol)
 
-            results.append(result)
+            snapshots.append(snapshot)
 
-            print(result)
+        snapshots = self.ranking.rank(snapshots)
+
+        print("Ranking Results")
+        print("-" * 70)
+
+        for index, snapshot in enumerate(snapshots, start=1):
+
+            print(
+                f"{index:02d}. "
+                f"{snapshot.symbol:<12} "
+                f"Score={snapshot.score:<3} "
+                f"Trend={snapshot.trend}"
+            )
 
         print("\nScanner Completed")
 
-        return results
+        return snapshots
