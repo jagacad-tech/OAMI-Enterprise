@@ -4,25 +4,26 @@ Scanner Engine
 """
 
 from app.market.models import MarketSnapshot
-from app.market.market_data import MarketDataProvider
 from app.market.indicators import IndicatorEngine
+from app.providers.openalgo import OpenAlgoProvider
 
 
 class Scanner:
+    """
+    Performs market analysis for a single symbol.
+    """
 
     def __init__(self):
 
-        self.market_data = MarketDataProvider()
+        self.provider = OpenAlgoProvider()
         self.indicators = IndicatorEngine()
 
     def scan(self, symbol: str) -> MarketSnapshot:
 
-        snapshot = MarketSnapshot(symbol=symbol)
+        # Get market data from provider
+        snapshot = self.provider.get_snapshot(symbol)
 
-        # Load market data
-        snapshot = self.market_data.get_snapshot(snapshot)
-
-        # Analyze indicators
+        # Analyze market data
         snapshot = self.indicators.analyze(snapshot)
 
         return snapshot
