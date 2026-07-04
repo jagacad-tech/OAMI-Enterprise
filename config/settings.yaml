@@ -1,11 +1,23 @@
+app:
+  name: OAMI Enterprise
+  version: 1.0.0
+  debug: true
+
 openalgo:
-
-  rest_url: https://ualgo.arvelstudios.com
-
-  websocket_url: wss://ualgo.arvelstudios.com/ws
-
-  api_key: YOUR_OPENALGO_API_KEY
-
   timeout: 10
+  reconnect: true
 
+market:
+  scan_interval: 1
+
+dashboard:
+  refresh_interval: 1
+
+logging:
+  level: INFO
+
+openalgo:
+  rest_url: https://ualgo.arvelstudios.com
+  websocket_url: wss://ualgo.arvelstudios.com/ws
+  timeout: 10
   reconnect: true

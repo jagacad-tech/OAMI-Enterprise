@@ -1,45 +1,44 @@
 """
-Configuration Service
+OAMI Enterprise
+Configuration Manager
 """
 
-from pathlib import Path
-
+import os
 import yaml
 
-from app.core.settings import (
-    AppSettings,
-    DatabaseSettings,
-    LoggingSettings,
-    ScannerSettings,
-    ServerSettings,
-    Settings,
-    TradingSettings,
-)
+from dotenv import load_dotenv
 
 
-class ConfigManager:
+# Load .env
+load_dotenv()
+
+
+class Settings:
 
     def __init__(self):
 
-        root = Path(__file__).resolve().parents[2]
+        # Load YAML
+        with open("config/settings.yaml", "r") as f:
+            config = yaml.safe_load(f)
 
-        self.config_file = root / "config" / "settings.yaml"
+        # Application
+        self.app = config.get("app", {})
 
-        self.settings = self.load()
+        # OpenAlgo
+        self.openalgo = {
+            "host": os.getenv("OPENALGO_HOST"),
+            "api_key": os.getenv("OPENALGO_API_KEY"),
+            **config.get("openalgo", {})
+        }
 
-    def load(self):
+        # Market
+        self.market = config.get("market", {})
 
-        with open(self.config_file, "r", encoding="utf-8") as file:
-            cfg = yaml.safe_load(file)
+        # Dashboard
+        self.dashboard = config.get("dashboard", {})
 
-        return Settings(
-            app=AppSettings(**cfg["app"]),
-            server=ServerSettings(**cfg["server"]),
-            database=DatabaseSettings(**cfg["database"]),
-            trading=TradingSettings(**cfg["trading"]),
-            scanner=ScannerSettings(**cfg["scanner"]),
-            logging=LoggingSettings(**cfg["logging"]),
-        )
+        # Logging
+        self.logging = config.get("logging", {})
 
 
-config = ConfigManager()
+settings = Settings()
