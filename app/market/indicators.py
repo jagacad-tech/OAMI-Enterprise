@@ -45,6 +45,24 @@ class IndicatorEngine:
         )
 
         # -----------------------------
+        # Intraday Position
+        # -----------------------------
+
+        if snapshot.high > snapshot.low:
+
+            snapshot.intraday_position = (
+                (snapshot.ltp - snapshot.low)
+                /
+                (snapshot.high - snapshot.low)
+            ) * 100
+
+        else:
+
+            snapshot.intraday_position = 50.0
+
+
+
+        # -----------------------------
         # Trend
         # -----------------------------
 

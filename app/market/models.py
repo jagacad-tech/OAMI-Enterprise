@@ -43,17 +43,24 @@ class MarketSnapshot:
     # Derived Values
     # -------------------------------------------------
 
-    change: float = 0.0
-    change_pct: float = 0.0
+# -------------------------------------------------
+# Derived Values
+# -------------------------------------------------
 
-    day_range: float = 0.0
-    day_range_pct: float = 0.0
+change: float = 0.0
+change_pct: float = 0.0
 
-    distance_from_high: float = 0.0
-    distance_from_low: float = 0.0
+day_range: float = 0.0
+day_range_pct: float = 0.0
 
-    trend: str = "NEUTRAL"
-    momentum: str = "NORMAL"
+distance_from_high: float = 0.0
+distance_from_low: float = 0.0
 
-    score: int = 0
-    confidence: int = 0
+# NEW
+intraday_position: float = 0.0
+
+trend: str = "NEUTRAL"
+momentum: str = "NORMAL"
+
+score: int = 0
+confidence: int = 0
