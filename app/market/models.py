@@ -50,6 +50,9 @@ class MarketSnapshot:
 change: float = 0.0
 change_pct: float = 0.0
 
+# Relative Volume
+rvol: float = 0.0
+
 day_range: float = 0.0
 day_range_pct: float = 0.0
 

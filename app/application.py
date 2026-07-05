@@ -40,17 +40,11 @@ class OAMIApplication:
         try:
 
             while True:
-
-                print(">>> Loop Start")
-
+                
                 results = self.scanner.scan()
-
-                print(">>> Scanner Finished")
-
+                
                 self.dashboard.show(results)
-
-                print(">>> Dashboard Finished")
-
+               
                 time.sleep(5)
 
         except Exception as e:

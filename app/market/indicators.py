@@ -2,7 +2,7 @@
 OAMI Enterprise
 Indicator Engine
 """
-
+from app.services.volume_manager import volume_manager
 
 class IndicatorEngine:
 
@@ -19,6 +19,17 @@ class IndicatorEngine:
             snapshot.change_pct = (
                 snapshot.change / snapshot.close
             ) * 100
+
+        # -------------------------------------------------
+        # Relative Volume (RVOL)
+        # -------------------------------------------------
+
+        avg_volume = volume_manager.average(snapshot.symbol)
+
+        snapshot.rvol = round(
+            snapshot.volume / avg_volume,
+            2
+        )
 
         # -----------------------------
         # Day Range
@@ -59,8 +70,6 @@ class IndicatorEngine:
         else:
 
             snapshot.intraday_position = 50.0
-
-
 
         # -----------------------------
         # Trend

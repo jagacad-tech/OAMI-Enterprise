@@ -77,15 +77,16 @@ class ScoringEngine:
 
     def volume_score(self, snapshot):
 
-        vol = snapshot.volume
+        rvol = snapshot.rvol
 
-        if vol >= 20_000_000:
+        if rvol >= 3:
+            return 30
+
+        elif rvol >= 2:
             return 20
 
-        if vol >= 10_000_000:
-            return 15
-
-        if vol >= 5_000_000:
+        elif rvol >= 1.5:
             return 10
 
-        return 5
+        else:
+            return 5

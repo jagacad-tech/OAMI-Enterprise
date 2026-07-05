@@ -7,6 +7,7 @@ from app.services.snapshot_manager import snapshot_manager
 from app.market.indicators import IndicatorEngine
 from app.market.scoring import ScoringEngine
 from app.market.ranking import RankingEngine
+from app.services.volume_manager import volume_manager
 
 
 class Scanner:
