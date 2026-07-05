@@ -8,6 +8,7 @@ import time
 from app.openalgo.websocket import OpenAlgoWebSocket
 from app.market.scanner import Scanner
 from app.services.watchlist_manager import watchlist
+from app.dashboard.console import ConsoleDashboard
 
 
 class OAMIApplication:
@@ -16,6 +17,7 @@ class OAMIApplication:
 
         self.websocket = OpenAlgoWebSocket()
         self.scanner = Scanner()
+        self.dashboard = ConsoleDashboard()
 
     def start(self):
 
@@ -39,33 +41,23 @@ class OAMIApplication:
 
             while True:
 
+                print(">>> Loop Start")
+
                 results = self.scanner.scan()
 
-                print("\n" + "=" * 120)
-                print("LIVE MARKET SCANNER")
-                print("=" * 120)
+                print(">>> Scanner Finished")
 
-                if not results:
-                    print("Waiting for market data...")
+                self.dashboard.show(results)
 
-                else:
-
-                    for rank, snapshot in enumerate(results, start=1):
-
-                        print(
-                            f"{rank:02d}. "
-                            f"{snapshot.symbol:<12}"
-                            f"LTP={snapshot.ltp:>8.2f} "
-                            f"Open={snapshot.open:>8.2f} "
-                            f"Close={snapshot.close:>8.2f} "
-                            f"Chg={snapshot.change_pct:>7.2f}% "
-                            f"Trend={snapshot.trend:<8} "
-                            f"Mom={snapshot.momentum:<8} "
-                            f"Score={snapshot.score:<3} "
-                            f"Conf={snapshot.confidence:<3}"
-                        )
+                print(">>> Dashboard Finished")
 
                 time.sleep(5)
+
+        except Exception as e:
+
+            print("\nAPPLICATION ERROR")
+            print("=================")
+            print(e)
 
         except KeyboardInterrupt:
 
