@@ -44,7 +44,7 @@ class ConsoleDashboard:
 
         print()
 
-        print("-" * 110)
+        print("-" * 132)
 
         print(
             f"{'Rank':<6}"
@@ -57,10 +57,12 @@ class ConsoleDashboard:
             f"{'Trend':>12}"
             f"{'Momentum':>12}"
             f"{'Score':>8}"
+            f"{'Signal':>10}"
+            f"{'Strength':>10}"
             f"{'Conf':>8}"
         )
 
-        print("-" * 110)
+        print("-" * 132)
 
         if not snapshots:
 
@@ -81,7 +83,9 @@ class ConsoleDashboard:
                 f"{snapshot.trend:>12}"
                 f"{snapshot.momentum:>12}"
                 f"{snapshot.score:>8}"
+                f"{snapshot.signal:>10}"
+                f"{snapshot.signal_strength:>10}"
                 f"{snapshot.confidence:>8}"
             )
 
-        print("-" * 110)
+        print("-" * 132)

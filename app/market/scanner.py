@@ -8,6 +8,7 @@ from app.market.indicators import IndicatorEngine
 from app.market.scoring import ScoringEngine
 from app.market.ranking import RankingEngine
 from app.services.volume_manager import volume_manager
+from app.market.signal import SignalEngine
 
 
 class Scanner:
@@ -17,6 +18,7 @@ class Scanner:
         self.indicators = IndicatorEngine()
         self.scoring = ScoringEngine()
         self.ranking = RankingEngine()
+        self.signal = SignalEngine()
 
     def scan(self):
 
@@ -29,6 +31,8 @@ class Scanner:
             snapshot = self.indicators.analyze(snapshot)
 
             snapshot = self.scoring.score(snapshot)
+            
+            snapshot = self.signal.analyze(snapshot)
 
             results.append(snapshot)
 
