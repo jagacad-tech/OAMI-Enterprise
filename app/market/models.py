@@ -1,6 +1,6 @@
 """
 OAMI Enterprise
-Market Data Models
+Market Models
 """
 
 from dataclasses import dataclass
@@ -10,25 +10,50 @@ from typing import Optional
 @dataclass
 class MarketSnapshot:
     """
-    Represents the market state of a single symbol.
+    Live Market Snapshot
+
+    Stores both:
+        • Raw market data
+        • Derived market analytics
     """
 
+    # -------------------------------------------------
+    # Instrument
+    # -------------------------------------------------
+
     symbol: str
+    exchange: str = "NSE"
 
-    status: str = "READY"
+    # -------------------------------------------------
+    # Market Data
+    # -------------------------------------------------
 
-    ltp: Optional[float] = None
+    timestamp: Optional[int] = None
 
-    open: Optional[float] = None
+    open: float = 0.0
+    high: float = 0.0
+    low: float = 0.0
+    close: float = 0.0
 
-    high: Optional[float] = None
+    ltp: float = 0.0
 
-    low: Optional[float] = None
+    volume: int = 0
 
-    close: Optional[float] = None
+    # -------------------------------------------------
+    # Derived Values
+    # -------------------------------------------------
 
-    volume: Optional[int] = None
+    change: float = 0.0
+    change_pct: float = 0.0
 
-    trend: Optional[str] = None
+    day_range: float = 0.0
+    day_range_pct: float = 0.0
+
+    distance_from_high: float = 0.0
+    distance_from_low: float = 0.0
+
+    trend: str = "NEUTRAL"
+    momentum: str = "NORMAL"
 
     score: int = 0
+    confidence: int = 0

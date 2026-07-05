@@ -35,20 +35,42 @@ class OAMIApplication:
 
         print("\n✅ OAMI Started Successfully\n")
 
-        while True:
+        try:
 
-            results = self.scanner.scan()
+            while True:
 
-            print("\n================ LIVE RANKING ================\n")
+                results = self.scanner.scan()
 
-            for i, snapshot in enumerate(results, start=1):
+                print("\n" + "=" * 120)
+                print("LIVE MARKET SCANNER")
+                print("=" * 120)
 
-                print(
-                    f"{i:02d}. "
-                    f"{snapshot.symbol:<12}"
-                    f"Score={snapshot.score:<3}"
-                    f"Trend={snapshot.trend}"
-                    f"  LTP={snapshot.ltp}"
-                )
+                if not results:
+                    print("Waiting for market data...")
 
-            time.sleep(5)
+                else:
+
+                    for rank, snapshot in enumerate(results, start=1):
+
+                        print(
+                            f"{rank:02d}. "
+                            f"{snapshot.symbol:<12}"
+                            f"LTP={snapshot.ltp:>8.2f} "
+                            f"Open={snapshot.open:>8.2f} "
+                            f"Close={snapshot.close:>8.2f} "
+                            f"Chg={snapshot.change_pct:>7.2f}% "
+                            f"Trend={snapshot.trend:<8} "
+                            f"Mom={snapshot.momentum:<8} "
+                            f"Score={snapshot.score:<3} "
+                            f"Conf={snapshot.confidence:<3}"
+                        )
+
+                time.sleep(5)
+
+        except KeyboardInterrupt:
+
+            print("\nStopping OAMI...")
+
+            self.websocket.disconnect()
+
+            print("OAMI stopped successfully.")

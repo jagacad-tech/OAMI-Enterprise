@@ -61,16 +61,30 @@ class OpenAlgoWebSocket:
     # ---------------------------------------------------------
 
     def on_quote(self, data):
+        """
+        Quote callback from OpenAlgo
+        """
 
-        snapshot_manager.update_quote(data)
-        snapshot = snapshot_manager.get(data["symbol"])
-        print(
-            f"[CALLBACK] "
-            f"{snapshot.symbol:<12}"
-            f"LTP={snapshot.ltp}"
-        )
+        try:
+            snapshot_manager.update_quote(data)
+            snapshot = snapshot_manager.get(data["symbol"])
+            print(
+                f"[CALLBACK] "
+                f"{snapshot.symbol:<12}"
+                f"LTP={snapshot.ltp}"
+            )
 
-        return snapshot
+            return snapshot
+        
+        except Exception as e:
+
+            print("\n==============================")
+            print("CALLBACK ERROR")
+            print("==============================")
+            print(e)
+            print(data)
+            print("==============================")
+
 
     # ---------------------------------------------------------
     # Quote Subscription
