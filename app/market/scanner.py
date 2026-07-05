@@ -27,7 +27,7 @@ class Scanner:
 
             snapshot = self.indicators.analyze(snapshot)
 
-            snapshot.score = self.scoring.calculate(snapshot)
+            snapshot = self.scoring.score(snapshot)
 
             results.append(snapshot)
 

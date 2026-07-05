@@ -1,39 +1,91 @@
 """
 OAMI Enterprise
-Scoring Engine
+Scoring Engine V2
 """
 
 
 class ScoringEngine:
 
-    def calculate(self, snapshot):
+    def score(self, snapshot):
 
-        score = 0
+        trend_score = self.trend_score(snapshot)
 
-        # Trend
+        momentum_score = self.momentum_score(snapshot)
+
+        position_score = self.position_score(snapshot)
+
+        volume_score = self.volume_score(snapshot)
+
+        total = (
+            trend_score
+            + momentum_score
+            + position_score
+            + volume_score
+        )
+
+        snapshot.score = total
+
+        snapshot.confidence = min(100, total)
+
+        return snapshot
+
+    # -------------------------------------------------
+
+    def trend_score(self, snapshot):
+
         if snapshot.trend == "BULLISH":
-            score += 30
+            return 30
 
-        # Momentum
-        if snapshot.momentum == "STRONG":
-            score += 30
+        if snapshot.trend == "NEUTRAL":
+            return 15
 
-        elif snapshot.momentum == "MEDIUM":
-            score += 20
+        return 0
 
-        else:
-            score += 10
+    # -------------------------------------------------
 
-        # Volume
-        if snapshot.volume > 10_000_000:
-            score += 40
+    def momentum_score(self, snapshot):
 
-        elif snapshot.volume > 5_000_000:
-            score += 25
+        if snapshot.momentum == "HIGH":
+            return 20
 
-        else:
-            score += 10
+        if snapshot.momentum == "MEDIUM":
+            return 10
 
-        snapshot.confidence = score
+        return 5
 
-        return score
+    # -------------------------------------------------
+
+    def position_score(self, snapshot):
+
+        pos = snapshot.intraday_position
+
+        if pos >= 90:
+            return 30
+
+        if pos >= 75:
+            return 20
+
+        if pos >= 60:
+            return 10
+
+        if pos >= 40:
+            return 5
+
+        return 0
+
+    # -------------------------------------------------
+
+    def volume_score(self, snapshot):
+
+        vol = snapshot.volume
+
+        if vol >= 20_000_000:
+            return 20
+
+        if vol >= 10_000_000:
+            return 15
+
+        if vol >= 5_000_000:
+            return 10
+
+        return 5
