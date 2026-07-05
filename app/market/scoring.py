@@ -1,32 +1,19 @@
 """
 OAMI Enterprise
-Score Engine
+Scoring Engine
 """
 
-from app.market.models import MarketSnapshot
 
+class ScoringEngine:
 
-class ScoreEngine:
-    """
-    Calculates the opportunity score.
-    """
-
-    def calculate(self, snapshot: MarketSnapshot) -> MarketSnapshot:
+    def calculate(self, snapshot):
 
         score = 0
 
-        # Trend Score
         if snapshot.trend == "BULLISH":
-            score += 30
+            score += 50
 
-        # Price Above Open
-        if snapshot.ltp > snapshot.open:
-            score += 20
+        if snapshot.volume and snapshot.volume > 1_000_000:
+            score += 50
 
-        # Strong Close
-        if snapshot.close >= snapshot.high * 0.99:
-            score += 10
-
-        snapshot.score = score
-
-        return snapshot
+        return score

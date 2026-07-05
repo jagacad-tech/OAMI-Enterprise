@@ -28,4 +28,6 @@ class SnapshotManager:
         return self.snapshots.get(symbol)
 
     def all(self):
-        return self.snapshots
+        return self.snapshots.copy()
+    
+snapshot_manager = SnapshotManager()

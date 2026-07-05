@@ -1,29 +1,34 @@
 """
 OAMI Enterprise
-Scanner Engine
+Live Market Scanner
 """
 
-from app.market.models import MarketSnapshot
+from app.services.snapshot_manager import snapshot_manager
 from app.market.indicators import IndicatorEngine
-from app.providers.openalgo import OpenAlgoProvider
+from app.market.scoring import ScoringEngine
+from app.market.ranking import RankingEngine
 
 
 class Scanner:
-    """
-    Performs market analysis for a single symbol.
-    """
 
     def __init__(self):
 
-        self.provider = OpenAlgoProvider()
         self.indicators = IndicatorEngine()
+        self.scoring = ScoringEngine()
+        self.ranking = RankingEngine()
 
-    def scan(self, symbol: str) -> MarketSnapshot:
+    def scan(self):
 
-        # Get market data from provider
-        snapshot = self.provider.get_snapshot(symbol)
+        snapshots = snapshot_manager.all()
 
-        # Analyze market data
-        snapshot = self.indicators.analyze(snapshot)
+        results = []
 
-        return snapshot
+        for symbol, snapshot in snapshots.items():
+
+            snapshot = self.indicators.analyze(snapshot)
+
+            snapshot.score = self.scoring.calculate(snapshot)
+
+            results.append(snapshot)
+
+        return self.ranking.sort(results)

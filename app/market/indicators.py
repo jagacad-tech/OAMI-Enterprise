@@ -3,28 +3,20 @@ OAMI Enterprise
 Indicator Engine
 """
 
-from app.market.models import MarketSnapshot
-from app.market.scoring import ScoreEngine
-
 
 class IndicatorEngine:
 
-    def __init__(self):
+    def analyze(self, snapshot):
 
-        self.score_engine = ScoreEngine()
+        if snapshot.ltp and snapshot.open:
 
-    def analyze(self, snapshot: MarketSnapshot) -> MarketSnapshot:
+            if snapshot.ltp > snapshot.open:
+                snapshot.trend = "BULLISH"
 
-        # Trend
+            elif snapshot.ltp < snapshot.open:
+                snapshot.trend = "BEARISH"
 
-        if snapshot.ltp >= snapshot.open:
-            snapshot.trend = "BULLISH"
-
-        else:
-            snapshot.trend = "BEARISH"
-
-        # Score
-
-        snapshot = self.score_engine.calculate(snapshot)
+            else:
+                snapshot.trend = "NEUTRAL"
 
         return snapshot
