@@ -22,7 +22,7 @@ class ConsoleDashboard:
         os.system("cls" if os.name == "nt" else "clear")
 
         print("=" * 130)
-        print("                             OAMI ENTERPRISE - LIVE MARKET DASHBOARD")
+        print("                                         OAMI ENTERPRISE - LIVE MARKET DASHBOARD")
         print("=" * 130)
 
         print(f"Time           : {datetime.now().strftime('%H:%M:%S')}")
@@ -56,7 +56,12 @@ class ConsoleDashboard:
             f"{'Trend':>12}"
             f"{'Momentum':>12}"
             f"{'Score':>8}"
+            f"{'Direction':>12}"
             f"{'Signal':>10}"
+            f"{'Option':>8}"
+            f"{'Strategy':>12}"
+            f"{'Action':>12}"
+            f"{'Quality':>10}"
             f"{'Strength':>10}"
             f"{'Conf':>8}"
         )
@@ -82,7 +87,12 @@ class ConsoleDashboard:
                 f"{snapshot.trend:>12}"
                 f"{snapshot.momentum:>12}"
                 f"{snapshot.score:>8}"
+                f"{snapshot.direction:>12}"
                 f"{snapshot.signal:>10}"
+                f"{snapshot.option_type:>8}"
+                f"{snapshot.strategy:>12}"
+                f"{snapshot.action:>12}"
+                f"{snapshot.setup_quality:>10}"
                 f"{snapshot.signal_strength:>10}"
                 f"{snapshot.confidence:>8}"
             )

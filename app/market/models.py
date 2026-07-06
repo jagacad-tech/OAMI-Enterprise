@@ -67,9 +67,25 @@ score: int = 0
 confidence: int = 0
 
 # -------------------------------------------------
-# Trading Signal
+# Trading Decision
 # -------------------------------------------------
 
 signal: str = "WAIT"
+
+direction: str = "NEUTRAL"
+
+option_type: str = "NONE"
+
+strategy: str = "NONE"
+
+# -------------------------------------------------
+# Final Trading Decision
+# -------------------------------------------------
+
+action: str = "NO TRADE"
+
+setup_quality: str = "C"
+
+decision_reason: str = "No setup"
 
 signal_strength: int = 0
