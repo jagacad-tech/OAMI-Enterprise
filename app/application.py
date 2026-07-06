@@ -9,6 +9,7 @@ from app.openalgo.websocket import OpenAlgoWebSocket
 from app.market.scanner import Scanner
 from app.services.watchlist_manager import watchlist
 from app.dashboard.console import ConsoleDashboard
+from app.market.market_state import MarketStateEngine
 
 
 class OAMIApplication:
@@ -18,6 +19,7 @@ class OAMIApplication:
         self.websocket = OpenAlgoWebSocket()
         self.scanner = Scanner()
         self.dashboard = ConsoleDashboard()
+        self.market_state = MarketStateEngine()
 
     def start(self):
 
@@ -43,7 +45,9 @@ class OAMIApplication:
                 
                 results = self.scanner.scan()
                 
-                self.dashboard.show(results)
+                market = self.market_state.analyze(results)
+                                             
+                self.dashboard.show(results, market)
                
                 time.sleep(5)
 

@@ -5,41 +5,40 @@ Console Dashboard
 
 import os
 from datetime import datetime
+MARKET_STATE_LABELS = {
+    "TRENDING_BULL": "🟢 TRENDING BULL",
+    "TRENDING_BEAR": "🔴 TRENDING BEAR",
+    "SIDEWAYS": "🟡 SIDEWAYS",
+    "HIGH_ACTIVITY": "🟣 HIGH ACTIVITY",
+    "UNKNOWN": "⚪ UNKNOWN",
+}
 
 
 class ConsoleDashboard:
 
-    def show(self, snapshots):
+    def show(self, snapshots, market):
 
         # Clear terminal
         os.system("cls" if os.name == "nt" else "clear")
 
-        print("=" * 110)
-        print("                 OAMI ENTERPRISE - LIVE MARKET DASHBOARD")
-        print("=" * 110)
+        print("=" * 130)
+        print("                             OAMI ENTERPRISE - LIVE MARKET DASHBOARD")
+        print("=" * 130)
+
+        print(f"Time           : {datetime.now().strftime('%H:%M:%S')}")
+        print(f"Symbols        : {len(snapshots)}")
+        #print(f"Market State   : {market['state']}")
+        print(
+            f"Market State   : "
+            f"{MARKET_STATE_LABELS.get(market['state'], market['state'])}"
+        )
+        print(f"Average Score  : {market['avg_score']}")
+        print(f"Average RVOL   : {market['avg_rvol']}")
 
         print(
-            f"Time : {datetime.now().strftime('%H:%M:%S')}"
-        )
-
-        print(
-            f"Symbols : {len(snapshots)}"
-        )
-
-        bullish = sum(
-            1 for s in snapshots if s.trend == "BULLISH"
-        )
-
-        bearish = sum(
-            1 for s in snapshots if s.trend == "BEARISH"
-        )
-
-        neutral = len(snapshots) - bullish - bearish
-
-        print(
-            f"Bullish : {bullish}    "
-            f"Bearish : {bearish}    "
-            f"Neutral : {neutral}"
+            f"Bullish : {market['bullish']}    "
+            f"Bearish : {market['bearish']}    "
+            f"Neutral : {market['neutral']}"
         )
 
         print()
