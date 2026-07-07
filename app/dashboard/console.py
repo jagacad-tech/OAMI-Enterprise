@@ -66,6 +66,8 @@ class ConsoleDashboard:
             f"{'Conf':>8}"
             f"{'Strike':>12}"
             f"{'Expiry':>12}"
+            f"{'State':>10}"
+            f"{'Age':>8}"
         )
 
         print("-" * 132)
@@ -99,6 +101,8 @@ class ConsoleDashboard:
                 f"{snapshot.confidence:>8}"
                 f"{snapshot.strike:>12}"
                 f"{snapshot.expiry:>12}"
+                f"{snapshot.signal_state:>10}"
+                f"{snapshot.signal_age:>8}"
             )
 
         print("-" * 132)

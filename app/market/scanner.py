@@ -6,7 +6,7 @@ from app.market.option_selector import OptionSelector
 from app.market.ranking import RankingEngine
 from app.services.snapshot_manager import snapshot_manager
 from app.market.trade_plan import TradePlanEngine
-
+from app.services.signal_memory import signal_memory
 
 class Scanner:
 
@@ -32,6 +32,13 @@ class Scanner:
             snapshot = self.scoring.score(snapshot)
             snapshot = self.signal.analyze(snapshot)
             snapshot = self.decision.analyze(snapshot)
+            record = signal_memory.update(
+                snapshot.symbol,
+                snapshot.action
+            )
+
+            snapshot.signal_state = record.state
+            snapshot.signal_age = record.age_seconds
             snapshot = self.option_selector.analyze(snapshot)
             snapshot = self.trade_plan.analyze(snapshot)
 

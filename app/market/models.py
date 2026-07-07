@@ -115,3 +115,11 @@ class MarketSnapshot:
     target2: float = 0.0
 
     risk_reward: float = 0.0
+    
+    # ---------------------------------
+    # Signal Lifecycle
+    # ---------------------------------
+
+    signal_state: str = "NEW"
+
+    signal_age: int = 0
