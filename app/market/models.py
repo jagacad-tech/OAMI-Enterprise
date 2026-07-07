@@ -100,3 +100,18 @@ class MarketSnapshot:
     expiry: str = "-"
 
     option_symbol: str = "-"
+    
+    
+    # =====================================================
+    # Trade Plan
+    # =====================================================
+
+    entry_price: float = 0.0
+
+    stop_loss: float = 0.0
+
+    target1: float = 0.0
+
+    target2: float = 0.0
+
+    risk_reward: float = 0.0

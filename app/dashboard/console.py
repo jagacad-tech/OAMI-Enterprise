@@ -102,3 +102,34 @@ class ConsoleDashboard:
             )
 
         print("-" * 132)
+        
+        
+        # =====================================================
+        # Top Trade Plan
+        # =====================================================
+
+        trade = max(
+            [s for s in snapshots if s.action.startswith("BUY")],
+            key=lambda x: x.confidence,
+            default=None,
+        )
+
+        if trade:
+
+            print()
+            print("=" * 70)
+            print("TOP TRADE PLAN")
+            print("=" * 70)
+
+            print(f"Underlying   : {trade.symbol}")
+            print(f"Action       : {trade.action}")
+            print(f"Strike       : {trade.strike}")
+            print(f"Expiry       : {trade.expiry}")
+
+            print()
+
+            print(f"Entry        : {trade.entry_price:.2f}")
+            print(f"Stop Loss    : {trade.stop_loss:.2f}")
+            print(f"Target 1     : {trade.target1:.2f}")
+            print(f"Target 2     : {trade.target2:.2f}")
+            print(f"Risk/Reward  : {trade.risk_reward:.2f}")

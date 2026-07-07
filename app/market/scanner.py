@@ -5,6 +5,7 @@ from app.market.decision import DecisionEngine
 from app.market.option_selector import OptionSelector
 from app.market.ranking import RankingEngine
 from app.services.snapshot_manager import snapshot_manager
+from app.market.trade_plan import TradePlanEngine
 
 
 class Scanner:
@@ -17,6 +18,7 @@ class Scanner:
         self.decision = DecisionEngine()
         self.option_selector = OptionSelector()
         self.ranking = RankingEngine()
+        self.trade_plan = TradePlanEngine()
 
     def scan(self):
 
@@ -30,9 +32,8 @@ class Scanner:
             snapshot = self.scoring.score(snapshot)
             snapshot = self.signal.analyze(snapshot)
             snapshot = self.decision.analyze(snapshot)
-
-            # THIS MUST EXIST
             snapshot = self.option_selector.analyze(snapshot)
+            snapshot = self.trade_plan.analyze(snapshot)
 
             results.append(snapshot)
 
