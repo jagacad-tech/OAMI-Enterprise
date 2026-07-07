@@ -64,6 +64,8 @@ class ConsoleDashboard:
             f"{'Quality':>10}"
             f"{'Strength':>10}"
             f"{'Conf':>8}"
+            f"{'Strike':>12}"
+            f"{'Expiry':>12}"
         )
 
         print("-" * 132)
@@ -95,6 +97,8 @@ class ConsoleDashboard:
                 f"{snapshot.setup_quality:>10}"
                 f"{snapshot.signal_strength:>10}"
                 f"{snapshot.confidence:>8}"
+                f"{snapshot.strike:>12}"
+                f"{snapshot.expiry:>12}"
             )
 
         print("-" * 132)

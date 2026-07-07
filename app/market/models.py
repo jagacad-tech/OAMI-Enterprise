@@ -12,21 +12,22 @@ class MarketSnapshot:
     """
     Live Market Snapshot
 
-    Stores both:
-        • Raw market data
-        • Derived market analytics
+    Stores:
+    - Raw market data
+    - Derived analytics
+    - Trading intelligence
     """
 
-    # -------------------------------------------------
+    # =====================================================
     # Instrument
-    # -------------------------------------------------
+    # =====================================================
 
     symbol: str
     exchange: str = "NSE"
 
-    # -------------------------------------------------
-    # Market Data
-    # -------------------------------------------------
+    # =====================================================
+    # Raw Market Data
+    # =====================================================
 
     timestamp: Optional[int] = None
 
@@ -39,53 +40,63 @@ class MarketSnapshot:
 
     volume: int = 0
 
-# -------------------------------------------------
-# Derived Values
-# -------------------------------------------------
+    # =====================================================
+    # Derived Price Analytics
+    # =====================================================
 
-change: float = 0.0
-change_pct: float = 0.0
+    change: float = 0.0
+    change_pct: float = 0.0
 
-# -------------------------------------------------
-# Relative Volume
-# -------------------------------------------------
-rvol: float = 0.0
+    rvol: float = 0.0
 
-day_range: float = 0.0
-day_range_pct: float = 0.0
+    day_range: float = 0.0
+    day_range_pct: float = 0.0
 
-distance_from_high: float = 0.0
-distance_from_low: float = 0.0
+    distance_from_high: float = 0.0
+    distance_from_low: float = 0.0
 
-# NEW
-intraday_position: float = 0.0
+    intraday_position: float = 0.0
 
-trend: str = "NEUTRAL"
-momentum: str = "NORMAL"
+    # =====================================================
+    # Market Intelligence
+    # =====================================================
 
-score: int = 0
-confidence: int = 0
+    trend: str = "NEUTRAL"
+    momentum: str = "NORMAL"
 
-# -------------------------------------------------
-# Trading Decision
-# -------------------------------------------------
+    score: int = 0
+    confidence: int = 0
 
-signal: str = "WAIT"
+    # =====================================================
+    # Signal Engine
+    # =====================================================
 
-direction: str = "NEUTRAL"
+    signal: str = "WAIT"
 
-option_type: str = "NONE"
+    direction: str = "NEUTRAL"
 
-strategy: str = "NONE"
+    option_type: str = "NONE"
 
-# -------------------------------------------------
-# Final Trading Decision
-# -------------------------------------------------
+    strategy: str = "NONE"
 
-action: str = "NO TRADE"
+    signal_strength: int = 0
 
-setup_quality: str = "C"
+    # =====================================================
+    # Decision Engine
+    # =====================================================
 
-decision_reason: str = "No setup"
+    action: str = "NO TRADE"
 
-signal_strength: int = 0
+    setup_quality: str = "C"
+
+    decision_reason: str = "No setup"
+
+    # =====================================================
+    # Option Recommendation
+    # =====================================================
+
+    strike: str = "-"
+
+    expiry: str = "-"
+
+    option_symbol: str = "-"
