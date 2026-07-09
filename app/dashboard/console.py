@@ -117,6 +117,8 @@ class ConsoleDashboard:
             key=lambda x: x.confidence,
             default=None,
         )
+        
+         #print(f"DEBUG Trade = {trade}")
 
         if trade:
 

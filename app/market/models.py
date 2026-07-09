@@ -24,6 +24,17 @@ class MarketSnapshot:
 
     symbol: str
     exchange: str = "NSE"
+    
+    
+    # ---------------------------------
+    # Instrument Details
+    # ---------------------------------
+
+    instrument_type: str = "STOCK"
+
+    strike_interval: int = 10
+
+    lot_size: int = 1
 
     # =====================================================
     # Raw Market Data
@@ -123,3 +134,4 @@ class MarketSnapshot:
     signal_state: str = "NEW"
 
     signal_age: int = 0
+    

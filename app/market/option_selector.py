@@ -32,7 +32,13 @@ class OptionSelector:
         # ATM Strike
         # ---------------------------------
 
-        strike = self.round_to_strike(snapshot.ltp)
+        strike = self.round_to_strike(
+
+            snapshot.ltp,
+
+            snapshot.strike_interval
+
+        )
 
         if snapshot.option_type == "CE":
 
@@ -51,6 +57,6 @@ class OptionSelector:
 
     # -------------------------------------
 
-    def round_to_strike(self, price):
+    def round_to_strike(self, price, interval):
 
-        return round(price / 10) * 10
+        return round(price / interval) * interval

@@ -1,6 +1,6 @@
 """
 OAMI Enterprise
-Options Signal Engine
+Signal Engine
 """
 
 
@@ -8,64 +8,61 @@ class SignalEngine:
 
     def analyze(self, snapshot):
 
-        snapshot.signal = "WAIT"
+        # ----------------------------------
+        # Default
+        # ----------------------------------
+
         snapshot.direction = "NEUTRAL"
         snapshot.option_type = "NONE"
         snapshot.strategy = "NONE"
         snapshot.signal_strength = 0
 
-        # -------------------------
-        # Bullish Opportunity
-        # -------------------------
+        # ----------------------------------
+        # Bullish
+        # ----------------------------------
 
-        if (
-            snapshot.trend == "BULLISH"
-            and snapshot.rvol >= 2
-            and snapshot.intraday_position >= 70
-            and snapshot.score >= 30
-        ):
+        if snapshot.trend == "BULLISH":
 
-            snapshot.signal = "BUY"
             snapshot.direction = "BULLISH"
             snapshot.option_type = "CE"
-            snapshot.strategy = "MOMENTUM"
-            snapshot.signal_strength = 90
 
-        # -------------------------
-        # Bearish Opportunity
-        # -------------------------
+            if snapshot.momentum == "STRONG":
 
-        elif (
-            snapshot.trend == "BEARISH"
-            and snapshot.rvol >= 2
-            and snapshot.intraday_position <= 30
-            and snapshot.score >= 30
-        ):
+                snapshot.strategy = "MOMENTUM"
+                snapshot.signal_strength = 90
 
-            snapshot.signal = "BUY"
+            elif snapshot.momentum == "MEDIUM":
+
+                snapshot.strategy = "SETUP"
+                snapshot.signal_strength = 70
+
+            else:
+
+                snapshot.strategy = "SETUP"
+                snapshot.signal_strength = 50
+
+        # ----------------------------------
+        # Bearish
+        # ----------------------------------
+
+        elif snapshot.trend == "BEARISH":
+
             snapshot.direction = "BEARISH"
             snapshot.option_type = "PE"
-            snapshot.strategy = "MOMENTUM"
-            snapshot.signal_strength = 90
 
-        # -------------------------
-        # Watch
-        # -------------------------
+            if snapshot.momentum == "STRONG":
 
-        elif snapshot.score >= 20:
+                snapshot.strategy = "MOMENTUM"
+                snapshot.signal_strength = 90
 
-            snapshot.signal = "WATCH"
+            elif snapshot.momentum == "MEDIUM":
 
-            snapshot.direction = snapshot.trend
+                snapshot.strategy = "SETUP"
+                snapshot.signal_strength = 70
 
-            if snapshot.trend == "BULLISH":
-                snapshot.option_type = "CE"
+            else:
 
-            elif snapshot.trend == "BEARISH":
-                snapshot.option_type = "PE"
-
-            snapshot.strategy = "SETUP"
-
-            snapshot.signal_strength = 50
+                snapshot.strategy = "SETUP"
+                snapshot.signal_strength = 50
 
         return snapshot

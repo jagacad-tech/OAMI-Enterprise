@@ -8,63 +8,51 @@ class DecisionEngine:
 
     def analyze(self, snapshot):
 
+        snapshot.signal = "WAIT"
+
         snapshot.action = "NO TRADE"
+
         snapshot.setup_quality = "C"
+
         snapshot.decision_reason = "No valid setup"
 
-        # ------------------------------------------------
-        # BUY CE
-        # ------------------------------------------------
+        # =====================================
+        # BUY
+        # =====================================
 
         if (
-            snapshot.signal == "BUY"
-            and snapshot.option_type == "CE"
+
+            snapshot.score >= 70
+
+            and snapshot.rvol >= 2
+
         ):
 
-            snapshot.action = "BUY CE"
+            snapshot.signal = "BUY"
 
-            if snapshot.score >= 90:
-                snapshot.setup_quality = "A+"
+            if snapshot.option_type == "CE":
 
-            elif snapshot.score >= 75:
-                snapshot.setup_quality = "A"
+                snapshot.action = "BUY CE"
 
-            elif snapshot.score >= 60:
-                snapshot.setup_quality = "B"
+                snapshot.decision_reason = (
+                    "Bullish trend with strong participation"
+                )
 
-            snapshot.decision_reason = (
-                "Bullish Momentum"
-            )
+            elif snapshot.option_type == "PE":
 
-        # ------------------------------------------------
-        # BUY PE
-        # ------------------------------------------------
+                snapshot.action = "BUY PE"
 
-        elif (
-            snapshot.signal == "BUY"
-            and snapshot.option_type == "PE"
-        ):
+                snapshot.decision_reason = (
+                    "Bearish trend with strong participation"
+                )
 
-            snapshot.action = "BUY PE"
-
-            if snapshot.score >= 90:
-                snapshot.setup_quality = "A+"
-
-            elif snapshot.score >= 75:
-                snapshot.setup_quality = "A"
-
-            elif snapshot.score >= 60:
-                snapshot.setup_quality = "B"
-
-            snapshot.decision_reason = (
-                "Bearish Momentum"
-            )
-
-        # ------------------------------------------------
+        # =====================================
         # WATCH
-        # ------------------------------------------------
+        # =====================================
 
-        elif snapshot.signal == "WATCH":
+        elif snapshot.score >= 30:
+
+            snapshot.signal = "WATCH"
 
             if snapshot.option_type == "CE":
 
@@ -74,10 +62,28 @@ class DecisionEngine:
 
                 snapshot.action = "WATCH PE"
 
-            snapshot.setup_quality = "C"
-
             snapshot.decision_reason = (
-                "Setup Developing"
+                "Setup developing"
             )
+
+        # =====================================
+        # Quality
+        # =====================================
+
+        if snapshot.score >= 90:
+
+            snapshot.setup_quality = "A+"
+
+        elif snapshot.score >= 75:
+
+            snapshot.setup_quality = "A"
+
+        elif snapshot.score >= 60:
+
+            snapshot.setup_quality = "B"
+
+        else:
+
+            snapshot.setup_quality = "C"
 
         return snapshot

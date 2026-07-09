@@ -37,7 +37,14 @@ class SignalMemory:
 
     # -------------------------------------------------
 
-    def update(self, symbol, signal):
+    def update(
+        self,
+        symbol,
+        signal,
+        confidence=None,
+        score=None,
+        rvol=None
+    ):
 
         now = datetime.now()
 
@@ -50,13 +57,9 @@ class SignalMemory:
             record = SignalRecord()
 
             record.signal = signal
-
             record.started = now
-
             record.last_update = now
-
             record.state = "NEW"
-
             record.age_seconds = 0
 
             self.records[symbol] = record
@@ -72,13 +75,9 @@ class SignalMemory:
         if record.signal != signal:
 
             record.signal = signal
-
             record.started = now
-
             record.last_update = now
-
             record.state = "NEW"
-
             record.age_seconds = 0
 
             return record
@@ -94,7 +93,7 @@ class SignalMemory:
         )
 
         # ---------------------------------------------
-        # Signal Lifecycle
+        # Lifecycle
         # ---------------------------------------------
 
         if record.age_seconds < NEW_TIME:
@@ -116,8 +115,6 @@ class SignalMemory:
         return record
 
 
-# -------------------------------------------------
-# Global Instance
 # -------------------------------------------------
 
 signal_memory = SignalMemory()
