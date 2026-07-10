@@ -11,9 +11,9 @@ from app.market.option_selector import OptionSelector
 from app.market.ranking import RankingEngine
 from app.market.trade_plan import TradePlanEngine
 from app.market.instrument_master import get
-
 from app.services.snapshot_manager import snapshot_manager
 from app.services.signal_memory import signal_memory
+from app.market.market_intelligence import MarketIntelligence
 
 
 class Scanner:
@@ -27,6 +27,7 @@ class Scanner:
         self.option_selector = OptionSelector()
         self.trade_plan = TradePlanEngine()
         self.ranking = RankingEngine()
+        self.market_intelligence = MarketIntelligence()
 
     # -------------------------------------------------
 

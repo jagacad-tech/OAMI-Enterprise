@@ -118,7 +118,7 @@ class ConsoleDashboard:
             default=None,
         )
         
-         #print(f"DEBUG Trade = {trade}")
+        #print(f"DEBUG Trade = {trade}")
 
         if trade:
 

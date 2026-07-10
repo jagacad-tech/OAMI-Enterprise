@@ -9,11 +9,8 @@ class DecisionEngine:
     def analyze(self, snapshot):
 
         snapshot.signal = "WAIT"
-
         snapshot.action = "NO TRADE"
-
         snapshot.setup_quality = "C"
-
         snapshot.decision_reason = "No valid setup"
 
         # =====================================
@@ -21,11 +18,8 @@ class DecisionEngine:
         # =====================================
 
         if (
-
             snapshot.score >= 70
-
             and snapshot.rvol >= 2
-
         ):
 
             snapshot.signal = "BUY"
@@ -85,5 +79,22 @@ class DecisionEngine:
         else:
 
             snapshot.setup_quality = "C"
+
+        # =====================================
+        # Live Debug (Temporary)
+        # =====================================
+
+        if snapshot.action != "NO TRADE":
+
+            print(
+                f"[{snapshot.action}] "
+                f"{snapshot.symbol:<12} "
+                f"Score={snapshot.score:<3} "
+                f"RVOL={snapshot.rvol:.2f} "
+                f"Trend={snapshot.trend:<8} "
+                f"Momentum={snapshot.momentum:<8} "
+                f"Pos={snapshot.intraday_position:.1f} "
+                f"Reason={snapshot.decision_reason}"
+            )
 
         return snapshot

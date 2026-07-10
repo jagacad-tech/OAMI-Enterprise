@@ -15,6 +15,7 @@ from app.core.config import settings
 from app.services.watchlist_manager import watchlist
 from app.services.snapshot_manager import snapshot_manager
 
+DEBUG_CALLBACK = False
 
 class OpenAlgoWebSocket:
     """
@@ -64,15 +65,15 @@ class OpenAlgoWebSocket:
         """
         Quote callback from OpenAlgo
         """
-
+        
         try:
             snapshot_manager.update_quote(data)
             snapshot = snapshot_manager.get(data["symbol"])
-            print(
-                f"[CALLBACK] "
-                f"{snapshot.symbol:<12}"
-                f"LTP={snapshot.ltp}"
-            )
+           # print(
+            #    f"[CALLBACK] "
+            #   f"{snapshot.symbol:<12}"
+            #  f"LTP={snapshot.ltp}"
+           # )
 
             return snapshot
         
