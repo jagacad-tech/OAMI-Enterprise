@@ -14,6 +14,7 @@ from app.market.instrument_master import get
 from app.services.snapshot_manager import snapshot_manager
 from app.services.signal_memory import signal_memory
 from app.market.market_intelligence import MarketIntelligence
+from app.market.depth_engine import DepthEngine
 
 
 class Scanner:
@@ -28,6 +29,8 @@ class Scanner:
         self.trade_plan = TradePlanEngine()
         self.ranking = RankingEngine()
         self.market_intelligence = MarketIntelligence()
+        self.depth_engine = DepthEngine()
+        
 
     # -------------------------------------------------
 
@@ -48,6 +51,18 @@ class Scanner:
             snapshot.instrument_type = instrument["instrument_type"]
             snapshot.strike_interval = instrument["strike_interval"]
             snapshot.lot_size = instrument["lot_size"]
+            
+            # ------------------------------------
+            # Order Flow
+            # ------------------------------------
+
+            snapshot = self.depth_engine.analyze(snapshot)
+
+            print(
+                f"{snapshot.symbol:<12}"
+                f" BidPressure={snapshot.bid_pressure}"
+            )
+
 
             # ------------------------------------
             # Market Analysis
@@ -60,6 +75,8 @@ class Scanner:
             snapshot = self.signal.analyze(snapshot)
 
             snapshot = self.decision.analyze(snapshot)
+            
+            snapshot = self.depth_engine.analyze(snapshot)
 
             # ------------------------------------
             # Signal Memory

@@ -34,6 +34,11 @@ class SnapshotManager:
 
             ltp=data.get("ltp", 0.0),
             volume=data.get("volume", 0),
+            
+            # --------------------------
+            # Level-5 Order Book
+            # --------------------------
+            depth=data.get("depth"),
         )
 
     def get(self, symbol):

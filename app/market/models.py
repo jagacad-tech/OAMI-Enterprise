@@ -17,7 +17,7 @@ class MarketSnapshot:
     - Derived analytics
     - Trading intelligence
     """
-
+    
     # =====================================================
     # Instrument
     # =====================================================
@@ -25,6 +25,23 @@ class MarketSnapshot:
     symbol: str
     exchange: str = "NSE"
     
+    # =====================================================
+    # Order Flow Metrics
+    # =====================================================
+
+    depth: dict | None = None
+
+    bid_pressure: int = 0
+    ask_pressure: int = 0
+
+    orderbook_imbalance: float = 0.0
+
+    spread: float = 0.0
+
+    support_wall: int = 0
+    resistance_wall: int = 0
+
+    orderflow: str = "NEUTRAL"
     
     # ---------------------------------
     # Instrument Details

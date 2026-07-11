@@ -15,7 +15,14 @@ from app.core.config import settings
 from app.services.watchlist_manager import watchlist
 from app.services.snapshot_manager import snapshot_manager
 
-DEBUG_CALLBACK = False
+
+# ---------------------------------------------------------
+# Debug Flags
+# ---------------------------------------------------------
+
+DEBUG_CALLBACK = True
+DEBUG_SUBSCRIPTION = True
+
 
 class OpenAlgoWebSocket:
     """
@@ -37,9 +44,6 @@ class OpenAlgoWebSocket:
     # ---------------------------------------------------------
 
     def connect(self) -> bool:
-        """
-        Connect to OpenAlgo WebSocket
-        """
 
         connected = self.client.connect()
 
@@ -49,9 +53,6 @@ class OpenAlgoWebSocket:
         return connected
 
     def disconnect(self):
-        """
-        Disconnect WebSocket
-        """
 
         self.client.disconnect()
 
@@ -62,21 +63,27 @@ class OpenAlgoWebSocket:
     # ---------------------------------------------------------
 
     def on_quote(self, data):
-        """
-        Quote callback from OpenAlgo
-        """
-        
+
         try:
+
             snapshot_manager.update_quote(data)
+
             snapshot = snapshot_manager.get(data["symbol"])
-           # print(
-            #    f"[CALLBACK] "
-            #   f"{snapshot.symbol:<12}"
-            #  f"LTP={snapshot.ltp}"
-           # )
+
+            # ----------------------------------------
+            # Debug Callback
+            # ----------------------------------------
+
+            if DEBUG_CALLBACK:
+
+                print(
+                    f"QUOTE RECEIVED : "
+                    f"{snapshot.symbol:<12}"
+                    f"LTP={snapshot.ltp}"
+                )
 
             return snapshot
-        
+
         except Exception as e:
 
             print("\n==============================")
@@ -86,15 +93,11 @@ class OpenAlgoWebSocket:
             print(data)
             print("==============================")
 
-
     # ---------------------------------------------------------
     # Quote Subscription
     # ---------------------------------------------------------
 
     def subscribe_quotes(self):
-        """
-        Subscribe to Quote feed
-        """
 
         if not watchlist.symbols():
 
@@ -105,6 +108,22 @@ class OpenAlgoWebSocket:
         print(
             f"Subscribing {len(watchlist.symbols())} symbols..."
         )
+
+        # ----------------------------------------
+        # Debug Subscription
+        # ----------------------------------------
+
+        if DEBUG_SUBSCRIPTION:
+
+            print("\n====================================")
+            print("SUBSCRIBING INSTRUMENTS")
+            print("====================================")
+
+            for instrument in watchlist.websocket_instruments():
+
+                print(instrument)
+
+            print("====================================\n")
 
         return self.client.subscribe_quote(
             instruments=watchlist.websocket_instruments(),
@@ -119,14 +138,12 @@ class OpenAlgoWebSocket:
         """
         Reserved for Level-5 Order Book
         """
-
         pass
 
     def subscribe_ltp(self):
         """
         Reserved for lightweight LTP stream
         """
-
         pass
 
     # ---------------------------------------------------------
@@ -134,9 +151,6 @@ class OpenAlgoWebSocket:
     # ---------------------------------------------------------
 
     def start(self):
-        """
-        Connect + Subscribe
-        """
 
         if not self.connect():
             return False
