@@ -74,13 +74,13 @@ class OpenAlgoWebSocket:
             # Debug Callback
             # ----------------------------------------
 
-            if DEBUG_CALLBACK:
+            #if DEBUG_CALLBACK:
 
-                print(
-                    f"QUOTE RECEIVED : "
-                    f"{snapshot.symbol:<12}"
-                    f"LTP={snapshot.ltp}"
-                )
+                #print(
+                    #f"QUOTE RECEIVED : "
+                    #f"{snapshot.symbol:<12}"
+                    #f"LTP={snapshot.ltp}"
+                #)
 
             return snapshot
 

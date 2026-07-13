@@ -29,13 +29,47 @@ class WatchlistManager:
         return self._symbols.copy()
 
     def websocket_instruments(self):
-        return [
-            {
-                "exchange": "NSE",
-                "symbol": symbol,
-            }
-            for symbol in self._symbols
-        ]
+        """
+        Build OpenAlgo subscription instruments with the correct exchange.
+        """
+
+        nse_indices = {
+            "NIFTY",
+            "BANKNIFTY",
+            "FINNIFTY",
+            "MIDCPNIFTY",
+            "INDIAVIX",
+        }
+
+        bse_indices = {
+            "SENSEX",
+            "BANKEX",
+        }
+
+        instruments = []
+
+        for symbol in self._symbols:
+
+            if symbol in nse_indices:
+
+                exchange = "NSE_INDEX"
+
+            elif symbol in bse_indices:
+
+                exchange = "BSE_INDEX"
+
+            else:
+
+                exchange = "NSE"
+
+            instruments.append(
+                {
+                    "exchange": exchange,
+                    "symbol": symbol,
+                }
+            )
+
+        return instruments
 
 
 # --------------------------------------------------------

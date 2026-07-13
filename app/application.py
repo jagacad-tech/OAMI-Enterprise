@@ -10,6 +10,7 @@ from app.market.scanner import Scanner
 from app.services.watchlist_manager import watchlist
 from app.dashboard.console import ConsoleDashboard
 from app.market.market_state import MarketStateEngine
+from pathlib import Path
 
 
 class OAMIApplication:
@@ -23,14 +24,26 @@ class OAMIApplication:
 
     def start(self):
 
-        # Initial Watchlist
-        watchlist.set_symbols([
-            "RELIANCE",
-            "SBIN",
-            "INFY",
-            "TCS",
-            "HDFCBANK",
-        ])
+        # ----------------------------------------
+        # Load Watchlist from config/watchlists/custom.txt
+        # ----------------------------------------
+
+        watchlist_file = Path("config/watchlists/custom.txt")
+
+        symbols = []
+
+        with open(watchlist_file, "r", encoding="utf-8") as f:
+            for line in f:
+                symbol = line.strip().upper()
+                if symbol:
+                    symbols.append(symbol)
+
+        watchlist.set_symbols(symbols)
+
+        print(f"Loaded {len(symbols)} symbols:")
+        for symbol in symbols:
+            print(f"  - {symbol}")
+            
 
         # Start WebSocket
         if not self.websocket.start():
