@@ -14,43 +14,69 @@ class SnapshotManager:
     def __init__(self):
         self.snapshots = {}
 
+    # --------------------------------------------------------
+    # Quote Update (MODE 2)
+    # --------------------------------------------------------
+
     def update_quote(self, quote):
-        """
-        Update MarketSnapshot from OpenAlgo Quote
-        """
 
         symbol = quote["symbol"]
         data = quote["data"]
 
-        self.snapshots[symbol] = MarketSnapshot(
-            symbol=symbol,
-            exchange=quote.get("exchange", "NSE"),
-            timestamp=data.get("timestamp"),
+        # Create snapshot only once
+        if symbol not in self.snapshots:
 
-            open=data.get("open", 0.0),
-            high=data.get("high", 0.0),
-            low=data.get("low", 0.0),
-            close=data.get("close", 0.0),
+            self.snapshots[symbol] = MarketSnapshot(
+                symbol=symbol,
+                exchange=quote.get("exchange", "NSE"),
+            )
 
-            ltp=data.get("ltp", 0.0),
-            volume=data.get("volume", 0),
-            
-            # --------------------------
-            # Level-5 Order Book
-            # --------------------------
-            depth=data.get("depth"),
-        )
+        snapshot = self.snapshots[symbol]
+
+        # Update quote fields only
+        snapshot.timestamp = data.get("timestamp", snapshot.timestamp)
+
+        snapshot.open = data.get("open", snapshot.open)
+        snapshot.high = data.get("high", snapshot.high)
+        snapshot.low = data.get("low", snapshot.low)
+        snapshot.close = data.get("close", snapshot.close)
+
+        snapshot.ltp = data.get("ltp", snapshot.ltp)
+        snapshot.volume = data.get("volume", snapshot.volume)
+
+    # --------------------------------------------------------
+    # Depth Update (MODE 3)
+    # --------------------------------------------------------
+
+    def update_depth(self, quote):
+
+        symbol = quote["symbol"]
+        data = quote["data"]
+
+        # Create snapshot if quote hasn't arrived yet
+        if symbol not in self.snapshots:
+
+            self.snapshots[symbol] = MarketSnapshot(
+                symbol=symbol,
+                exchange=quote.get("exchange", "NSE"),
+            )
+
+        snapshot = self.snapshots[symbol]
+
+        snapshot.timestamp = data.get("timestamp", snapshot.timestamp)
+        snapshot.ltp = data.get("ltp", snapshot.ltp)
+
+        # Only update depth
+        snapshot.depth = data.get("depth", snapshot.depth)
+
+    # --------------------------------------------------------
+    # Access
+    # --------------------------------------------------------
 
     def get(self, symbol):
-        """
-        Get snapshot by symbol
-        """
         return self.snapshots.get(symbol)
 
     def all(self):
-        """
-        Return all snapshots
-        """
         return self.snapshots.copy()
 
 

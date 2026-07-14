@@ -34,6 +34,7 @@ class Scanner:
 
     # -------------------------------------------------
 
+    
     def scan(self):
 
         snapshots = snapshot_manager.all()
@@ -51,7 +52,7 @@ class Scanner:
             snapshot.instrument_type = instrument["instrument_type"]
             snapshot.strike_interval = instrument["strike_interval"]
             snapshot.lot_size = instrument["lot_size"]
-            
+
             # ------------------------------------
             # Order Flow
             # ------------------------------------
@@ -62,7 +63,6 @@ class Scanner:
                 f"{snapshot.symbol:<12}"
                 f" BidPressure={snapshot.bid_pressure}"
             )
-
 
             # ------------------------------------
             # Market Analysis
@@ -75,8 +75,6 @@ class Scanner:
             snapshot = self.signal.analyze(snapshot)
 
             snapshot = self.decision.analyze(snapshot)
-            
-            snapshot = self.depth_engine.analyze(snapshot)
 
             # ------------------------------------
             # Signal Memory
@@ -85,20 +83,15 @@ class Scanner:
             record = signal_memory.update(
 
                 symbol=snapshot.symbol,
-
                 signal=snapshot.action,
-
                 confidence=snapshot.confidence,
-
                 score=snapshot.score,
-
                 rvol=snapshot.rvol
 
             )
 
             snapshot.signal_state = record.state
             snapshot.signal_age = record.age_seconds
-            
 
             # ------------------------------------
             # Option Selection
@@ -112,6 +105,21 @@ class Scanner:
 
             snapshot = self.trade_plan.analyze(snapshot)
 
-            results.append(snapshot)
+            # ------------------------------------
+            # Debug
+            # ------------------------------------
+
+            if snapshot is None:
+
+                print(f"ERROR : {symbol} snapshot became None")
+
+            else:
+
+                print(f"Scanner OK : {snapshot.symbol}")
+
+                results.append(snapshot)
+
+        print(f"Total Results = {len(results)}")
 
         return self.ranking.sort(results)
+

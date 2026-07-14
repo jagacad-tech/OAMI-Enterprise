@@ -4,9 +4,9 @@ OpenAlgo WebSocket Manager
 
 Responsibilities:
 - Connect to OpenAlgo WebSocket
-- Subscribe to live market feeds
+- Subscribe to Quote feed
+- Subscribe to Depth feed
 - Update SnapshotManager
-- Hide OpenAlgo implementation from the rest of OAMI
 """
 
 from openalgo import api
@@ -66,23 +66,34 @@ class OpenAlgoWebSocket:
 
         try:
 
-            snapshot_manager.update_quote(data)
-
-            snapshot = snapshot_manager.get(data["symbol"])
-
             # ----------------------------------------
-            # Debug Callback
+            # DEBUG
             # ----------------------------------------
 
-            #if DEBUG_CALLBACK:
+            if DEBUG_CALLBACK:
 
-                #print(
-                    #f"QUOTE RECEIVED : "
-                    #f"{snapshot.symbol:<12}"
-                    #f"LTP={snapshot.ltp}"
-                #)
+                print("\n========================================")
+                print("SYMBOL :", data.get("symbol"))
+                print("MODE   :", data.get("mode"))
 
-            return snapshot
+                if "depth" in data.get("data", {}):
+                    print("DEPTH  : YES")
+                else:
+                    print("DEPTH  : NO")
+
+                print(
+                    "DATA KEYS :",
+                    list(data.get("data", {}).keys())
+                )
+                print("========================================")
+
+            if data.get("mode") == 2:
+                snapshot_manager.update_quote(data)
+
+            elif data.get("mode") == 3:
+                snapshot_manager.update_depth(data)
+
+            return snapshot_manager.get(data["symbol"])
 
         except Exception as e:
 
@@ -92,6 +103,8 @@ class OpenAlgoWebSocket:
             print(e)
             print(data)
             print("==============================")
+
+            return None
 
     # ---------------------------------------------------------
     # Quote Subscription
@@ -106,21 +119,16 @@ class OpenAlgoWebSocket:
             return False
 
         print(
-            f"Subscribing {len(watchlist.symbols())} symbols..."
+            f"Subscribing Quotes for {len(watchlist.symbols())} symbols..."
         )
-
-        # ----------------------------------------
-        # Debug Subscription
-        # ----------------------------------------
 
         if DEBUG_SUBSCRIPTION:
 
             print("\n====================================")
-            print("SUBSCRIBING INSTRUMENTS")
+            print("QUOTE SUBSCRIPTION")
             print("====================================")
 
             for instrument in watchlist.websocket_instruments():
-
                 print(instrument)
 
             print("====================================\n")
@@ -131,14 +139,29 @@ class OpenAlgoWebSocket:
         )
 
     # ---------------------------------------------------------
-    # Future Features
+    # Depth Subscription
     # ---------------------------------------------------------
 
     def subscribe_depth(self):
-        """
-        Reserved for Level-5 Order Book
-        """
-        pass
+
+        if not watchlist.symbols():
+
+            print("Watchlist is empty.")
+
+            return False
+
+        print(
+            f"Subscribing Depth for {len(watchlist.symbols())} symbols..."
+        )
+
+        return self.client.subscribe_depth(
+            instruments=watchlist.websocket_instruments(),
+            on_data_received=self.on_quote,
+        )
+
+    # ---------------------------------------------------------
+    # Future
+    # ---------------------------------------------------------
 
     def subscribe_ltp(self):
         """
@@ -147,7 +170,7 @@ class OpenAlgoWebSocket:
         pass
 
     # ---------------------------------------------------------
-    # Start Service
+    # Start
     # ---------------------------------------------------------
 
     def start(self):
@@ -155,4 +178,18 @@ class OpenAlgoWebSocket:
         if not self.connect():
             return False
 
-        return self.subscribe_quotes()
+        quote_ok = self.subscribe_quotes()
+
+        depth_ok = self.subscribe_depth()
+
+        if quote_ok:
+            print("✓ Quote subscription successful")
+        else:
+            print("✗ Quote subscription failed")
+
+        if depth_ok:
+            print("✓ Depth subscription successful")
+        else:
+            print("✗ Depth subscription failed")
+
+        return quote_ok and depth_ok
