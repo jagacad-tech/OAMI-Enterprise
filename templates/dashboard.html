@@ -2,20 +2,68 @@
 
 {% block content %}
 
-<h1>OAMI Enterprise</h1>
+<h1 class="mb-4">OAMI Enterprise</h1>
 
-<hr>
+<section aria-labelledby="market-indices-heading">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 id="market-indices-heading" class="h4 mb-0">Market Indices</h2>
+    <span class="text-secondary small">Latest passive snapshot</span>
+  </div>
+  <div id="market-indices" class="row g-3" aria-live="polite">
+    <p class="text-secondary">Waiting for latest market snapshots…</p>
+  </div>
+</section>
 
-<div class="card">
+{% endblock %}
 
-<div class="card-body">
+{% block scripts %}
+<script>
+(() => {
+  const container = document.getElementById("market-indices");
+  const refreshMs = {{ refresh_interval | int }} * 1000;
 
-<h3>Dashboard Ready</h3>
+  const trendClass = (trend) => ({
+    BULLISH: "text-success",
+    BEARISH: "text-danger",
+    NEUTRAL: "text-secondary"
+  }[trend] || "text-secondary");
 
-<p>Welcome to OAMI Enterprise.</p>
+  const render = (indices) => {
+    if (!indices.length) {
+      container.innerHTML = '<p class="text-secondary">Waiting for latest market snapshots…</p>';
+      return;
+    }
+    container.replaceChildren(...indices.map((index) => {
+      const column = document.createElement("div");
+      column.className = "col-12 col-sm-6 col-xl-3";
+      const value = Number(index.value).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      column.innerHTML = `
+        <article class="card bg-dark border-secondary h-100">
+          <div class="card-body">
+            <div class="text-secondary small">${index.symbol}</div>
+            <div class="fs-4 fw-semibold">${value}</div>
+            <div class="small fw-semibold ${trendClass(index.trend)}">${index.trend}</div>
+          </div>
+        </article>`;
+      return column;
+    }));
+  };
 
-</div>
+  const refresh = async () => {
+    try {
+      const response = await fetch("/api/market-indices", { cache: "no-store" });
+      if (!response.ok) throw new Error("Index feed unavailable");
+      render((await response.json()).indices || []);
+    } catch (_) {
+      container.innerHTML = '<p class="text-secondary">Market index feed is unavailable.</p>';
+    }
+  };
 
-</div>
-
+  refresh();
+  window.setInterval(refresh, Math.max(refreshMs, 1000));
+})();
+</script>
 {% endblock %}

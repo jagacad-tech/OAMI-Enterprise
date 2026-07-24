@@ -6,6 +6,7 @@ Market Intelligence Engine
 from app.market.symbols import SymbolManager
 from app.market.scanner import Scanner
 from app.market.ranking import RankingEngine
+from app.core.logger import logger
 
 
 class MarketEngine:
@@ -19,37 +20,31 @@ class MarketEngine:
         self.ranking = RankingEngine()
 
     def start(self):
+        try:
+            print("=" * 70)
+            print("OAMI MARKET INTELLIGENCE ENGINE")
+            print("=" * 70)
 
-        print("=" * 70)
-        print("OAMI MARKET INTELLIGENCE ENGINE")
-        print("=" * 70)
+            symbols = self.symbol_manager.load()
+            print(f"Loaded {len(symbols)} symbols\n")
 
-        symbols = self.symbol_manager.load()
+            # Scanner.scan() is a full-snapshot pass.  Calling it once avoids
+            # re-scanning the whole snapshot set for every configured symbol.
+            snapshots = self.scanner.scan()
 
-        print(f"Loaded {len(symbols)} symbols\n")
+            print("Ranking Results")
+            print("-" * 70)
 
-        snapshots = []
+            for index, snapshot in enumerate(snapshots, start=1):
+                print(
+                    f"{index:02d}. "
+                    f"{snapshot.symbol:<12} "
+                    f"Score={snapshot.score:<3} "
+                    f"Trend={snapshot.trend}"
+                )
 
-        for symbol in symbols:
-
-            snapshot = self.scanner.scan(symbol)
-
-            snapshots.append(snapshot)
-
-        snapshots = self.ranking.rank(snapshots)
-
-        print("Ranking Results")
-        print("-" * 70)
-
-        for index, snapshot in enumerate(snapshots, start=1):
-
-            print(
-                f"{index:02d}. "
-                f"{snapshot.symbol:<12} "
-                f"Score={snapshot.score:<3} "
-                f"Trend={snapshot.trend}"
-            )
-
-        print("\nScanner Completed")
-
-        return snapshots
+            print("\nScanner Completed")
+            return snapshots
+        except Exception:
+            logger.exception("Market engine scanner pass failed")
+            return []

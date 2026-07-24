@@ -5,6 +5,11 @@ Console Dashboard
 
 import os
 from datetime import datetime
+
+from app.core.config import settings
+from app.dashboard.market_indices import MarketIndexFeed
+
+
 MARKET_STATE_LABELS = {
     "TRENDING_BULL": "🟢 TRENDING BULL",
     "TRENDING_BEAR": "🔴 TRENDING BEAR",
@@ -16,7 +21,17 @@ MARKET_STATE_LABELS = {
 
 class ConsoleDashboard:
 
-    def show(self, snapshots, market):
+    def __init__(self, market_index_feed=None):
+        """Render passive market-index snapshots alongside scanner output."""
+        self.market_index_feed = market_index_feed or MarketIndexFeed(
+            settings.observability.get(
+                "analytics_database_path", "data/oami_analytics.sqlite3"
+            )
+        )
+
+    def show(self, snapshots, market, diagnostics=None):
+
+        diagnostics = diagnostics or {}
 
         # Clear terminal
         os.system("cls" if os.name == "nt" else "clear")
@@ -26,7 +41,28 @@ class ConsoleDashboard:
         print("=" * 130)
 
         print(f"Time           : {datetime.now().strftime('%H:%M:%S')}")
-        print(f"Symbols        : {len(snapshots)}")
+        self._show_market_indices()
+        print("-" * 132)
+        print(
+            "Configured Watchlist Symbols : "
+            f"{diagnostics.get('configured_watchlist_symbols', 0)}"
+        )
+        print(
+            "Active Snapshots             : "
+            f"{diagnostics.get('active_snapshots', len(snapshots))}"
+        )
+        print(
+            "Quote Feed Status            : "
+            f"{diagnostics.get('quote_feed_status', 'WAITING')}"
+        )
+        print(
+            "Depth Feed Status            : "
+            f"{diagnostics.get('depth_feed_status', 'WAITING')}"
+        )
+        print(
+            "Lifecycle Event Count        : "
+            f"{diagnostics.get('lifecycle_event_count', 0)}"
+        )
         #print(f"Market State   : {market['state']}")
         print(
             f"Market State   : "
@@ -70,8 +106,7 @@ class ConsoleDashboard:
             f"{'Conf':>8}"
             f"{'Strike':>12}"
             f"{'Expiry':>12}"
-            f"{'State':>10}"
-            f"{'Age':>8}"
+            f"{'Lifecycle':>12}"
         )
 
         print("-" * 132)
@@ -109,8 +144,7 @@ class ConsoleDashboard:
                 f"{snapshot.confidence:>8}"
                 f"{snapshot.strike:>12}"
                 f"{snapshot.expiry:>12}"
-                f"{snapshot.signal_state:>10}"
-                f"{snapshot.signal_age:>8}"
+                f"{snapshot.lifecycle_state:>12}"
             )
 
         print("-" * 132)
@@ -121,7 +155,10 @@ class ConsoleDashboard:
         # =====================================================
 
         trade = max(
-            [s for s in snapshots if s.action.startswith("BUY")],
+            [
+                s for s in snapshots
+                if s.lifecycle_state in {"NEW BUY", "CONFIRMED"}
+            ],
             key=lambda x: x.confidence,
             default=None,
         )
@@ -147,3 +184,27 @@ class ConsoleDashboard:
             print(f"Target 1     : {trade.target1:.2f}")
             print(f"Target 2     : {trade.target2:.2f}")
             print(f"Risk/Reward  : {trade.risk_reward:.2f}")
+
+    def _show_market_indices(self):
+        """Show only the latest snapshots written by the passive index feed."""
+        print("Market Indices (Passive Feed)")
+
+        indices = self.market_index_feed.latest()
+        if not indices:
+            print("Waiting for index data...")
+            return
+
+        print(f"{'Symbol':<15}{'Current Value':>18}{'Trend':>12}")
+        for index in indices:
+            value = index.get("value")
+            try:
+                value_display = f"{float(value):,.2f}"
+            except (TypeError, ValueError):
+                value_display = "N/A"
+
+            trend = str(index.get("trend") or "NEUTRAL").capitalize()
+            print(
+                f"{index.get('symbol', ''):<15}"
+                f"{value_display:>18}"
+                f"{trend:>12}"
+            )

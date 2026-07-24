@@ -1,62 +1,42 @@
-"""
-OAMI Enterprise
-Option Selection Engine
-"""
+"""Option selection based exclusively on validated chain contracts."""
+
+from app.market.instrument_master import get_option_chain
 
 
 class OptionSelector:
+    def __init__(self, option_chain_provider=get_option_chain):
+        self.option_chain_provider = option_chain_provider
 
     def analyze(self, snapshot):
-
-        print(
-            f"{snapshot.symbol:<12}"
-            f"ACTION={snapshot.action:<10}"
-            f"OPTION={snapshot.option_type:<5}"
-        )
-
         snapshot.strike = "-"
         snapshot.expiry = "-"
         snapshot.option_symbol = "-"
+        snapshot.option_reason = "No active trade lifecycle"
 
-        # ---------------------------------
-        # No Trade
-        # ---------------------------------
-
-        if snapshot.action == "NO TRADE":
-
-            print(f" -> STRIKE={snapshot.strike}")
-
+        # Recommendations are entry-only.  Holds and exits retain the lifecycle
+        # action, but do not produce a fresh contract recommendation.
+        if snapshot.lifecycle_state not in {"NEW BUY", "CONFIRMED"}:
             return snapshot
 
-        # ---------------------------------
-        # ATM Strike
-        # ---------------------------------
+        chain = self.option_chain_provider(snapshot.symbol) or []
+        contracts = [
+            contract for contract in chain
+            if contract.get("option_type") == snapshot.option_type
+            and contract.get("strike") is not None
+            and contract.get("symbol")
+            and contract.get("expiry")
+        ]
 
-        strike = self.round_to_strike(
+        if not contracts:
+            snapshot.option_reason = "No validated option chain available"
+            return snapshot
 
-            snapshot.ltp,
-
-            snapshot.strike_interval
-
+        contract = min(
+            contracts,
+            key=lambda item: abs(float(item["strike"]) - snapshot.ltp),
         )
-
-        if snapshot.option_type == "CE":
-
-            snapshot.strike = f"{strike} CE"
-
-        elif snapshot.option_type == "PE":
-
-            snapshot.strike = f"{strike} PE"
-
-        snapshot.option_symbol = snapshot.strike
-        snapshot.expiry = "NEXT WEEK"
-
-        print(f" -> STRIKE={snapshot.strike}")
-
+        snapshot.strike = f'{contract["strike"]} {snapshot.option_type}'
+        snapshot.expiry = str(contract["expiry"])
+        snapshot.option_symbol = contract["symbol"]
+        snapshot.option_reason = "Validated option-chain contract"
         return snapshot
-
-    # -------------------------------------
-
-    def round_to_strike(self, price, interval):
-
-        return round(price / interval) * interval

@@ -40,5 +40,8 @@ class Settings:
         # Logging
         self.logging = config.get("logging", {})
 
+        # Passive lifecycle observability outputs
+        self.observability = config.get("observability", {})
+
 
 settings = Settings()

@@ -69,6 +69,10 @@ INSTRUMENTS = {
 
 }
 
+# Populated only by a validated exchange or broker instrument-master loader.
+# Interval rounding is not a substitute for a real option contract.
+OPTION_CHAINS = {}
+
 
 def get(symbol):
 
@@ -80,3 +84,8 @@ def get(symbol):
             "lot_size": 1
         }
     )
+
+
+def get_option_chain(symbol):
+    """Return validated option contracts for an underlying symbol."""
+    return OPTION_CHAINS.get(symbol, [])

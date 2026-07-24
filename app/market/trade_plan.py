@@ -14,7 +14,7 @@ class TradePlanEngine:
         snapshot.target2 = 0.0
         snapshot.risk_reward = 0.0
 
-        if snapshot.action == "NO TRADE":
+        if snapshot.lifecycle_state not in {"NEW BUY", "CONFIRMED"}:
             return snapshot
 
         # ------------------------------------------------

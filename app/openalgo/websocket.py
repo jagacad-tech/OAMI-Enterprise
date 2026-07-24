@@ -12,6 +12,8 @@ Responsibilities:
 from openalgo import api
 
 from app.core.config import settings
+from app.core.logger import logger
+from app.observability.market_session import MarketSessionRecorder
 from app.services.watchlist_manager import watchlist
 from app.services.snapshot_manager import snapshot_manager
 
@@ -20,7 +22,7 @@ from app.services.snapshot_manager import snapshot_manager
 # Debug Flags
 # ---------------------------------------------------------
 
-DEBUG_CALLBACK = True
+DEBUG_WEBSOCKET = False
 DEBUG_SUBSCRIPTION = True
 
 
@@ -29,7 +31,9 @@ class OpenAlgoWebSocket:
     Production WebSocket Manager
     """
 
-    def __init__(self):
+    def __init__(self, market_session_recorder=None):
+
+        self.market_session_recorder = market_session_recorder
 
         self.client = api(
             api_key=settings.openalgo["api_key"],
@@ -66,26 +70,27 @@ class OpenAlgoWebSocket:
 
         try:
 
+            # Index updates belong to the passive market-session analytics
+            # stream.  They deliberately never enter the stock snapshot store,
+            # so the stock scanner cannot create index signals or lifecycles.
+            if MarketSessionRecorder.accepts(data):
+                if self.market_session_recorder is not None:
+                    self.market_session_recorder.observe(data)
+                return None
+
             # ----------------------------------------
             # DEBUG
             # ----------------------------------------
 
-            if DEBUG_CALLBACK:
-
-                print("\n========================================")
-                print("SYMBOL :", data.get("symbol"))
-                print("MODE   :", data.get("mode"))
-
-                if "depth" in data.get("data", {}):
-                    print("DEPTH  : YES")
-                else:
-                    print("DEPTH  : NO")
-
-                print(
-                    "DATA KEYS :",
-                    list(data.get("data", {}).keys())
+            if DEBUG_WEBSOCKET:
+                payload = data.get("data", {})
+                logger.debug(
+                    "WebSocket callback: symbol=%s mode=%s depth=%s data_keys=%s",
+                    data.get("symbol"),
+                    data.get("mode"),
+                    "depth" in payload,
+                    list(payload.keys()),
                 )
-                print("========================================")
 
             if data.get("mode") == 2:
                 snapshot_manager.update_quote(data)
@@ -95,12 +100,13 @@ class OpenAlgoWebSocket:
 
             return snapshot_manager.get(data["symbol"])
 
-        except Exception as e:
+        except Exception:
+
+            logger.exception("OpenAlgo quote callback failed")
 
             print("\n==============================")
             print("CALLBACK ERROR")
             print("==============================")
-            print(e)
             print(data)
             print("==============================")
 

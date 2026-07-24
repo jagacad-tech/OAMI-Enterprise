@@ -59,6 +59,10 @@ class MarketSnapshot:
 
     timestamp: Optional[int] = None
 
+    quote_updated_at: Optional[int] = None
+
+    depth_updated_at: Optional[int] = None
+
     open: float = 0.0
     high: float = 0.0
     low: float = 0.0
@@ -128,6 +132,8 @@ class MarketSnapshot:
     expiry: str = "-"
 
     option_symbol: str = "-"
+
+    option_reason: str = "No option recommendation"
     
     
     # =====================================================
@@ -151,4 +157,16 @@ class MarketSnapshot:
     signal_state: str = "NEW"
 
     signal_age: int = 0
+
+    # ---------------------------------
+    # Trade Lifecycle (Sprint 2B)
+    # ---------------------------------
+
+    lifecycle_state: str = "INVALID"
+
+    lifecycle_reason: str = "No valid trade setup"
+
+    lifecycle_updated_at: Optional[str] = None
+
+    trade_id: str = "-"
     

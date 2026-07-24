@@ -16,8 +16,22 @@ dashboard:
 logging:
   level: INFO
 
+observability:
+  lifecycle_log_enabled: true
+  trade_summary_enabled: true
+  # Passive analytics only: never used for trading decisions.
+  analytics_database_path: data/oami_analytics.sqlite3
+  trade_intelligence_enabled: true
+  market_session_enabled: true
+  market_session_min_capture_interval_seconds: 1.0
+  telegram_enabled: true
+  csv_export_enabled: true
+  completed_trades_path: data/completed_trades.csv
+  bot_token_env: TELEGRAM_BOT_TOKEN
+  chat_id_env: TELEGRAM_CHAT_ID
+
 openalgo:
-  rest_url: https://ualgo.arvelstudios.com
-  websocket_url: wss://ualgo.arvelstudios.com/ws
+  rest_url: https://algo.arvelstudios.com
+  websocket_url: wss://algo.arvelstudios.com/ws
   timeout: 10
   reconnect: true

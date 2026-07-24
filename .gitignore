@@ -24,6 +24,10 @@ env/
 logs/
 *.log
 
+# Developer-only observability self-test output
+data/observability_self_test.csv
+data/oami_analytics.sqlite3*
+
 # Database
 database/*.db
 
